@@ -14,6 +14,8 @@
 
 Your task is to create a React component library with a single component: the Carousel.
 
+#### Important: This carousel component needs to be built from scratch, you cannot use "carousel" libraries. Libraries for handling dragging on mobile are allowed, however
+
 ### Carousel Component Requirements
 
 1. **Children and Width**:
