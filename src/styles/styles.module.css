@@ -1,0 +1,60 @@
+.carouselBase {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  outline: none;
+  position: relative;
+}
+
+.itemProvider {
+  overflow: hidden;
+  width: 100%;
+  cursor: pointer;
+}
+
+.itemContainer {
+  background-color: green;
+  color: white;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  width: 600px !important;
+}
+
+.itemContainer img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.itemTracker {
+  height: 100%;
+  display: flex;
+}
+
+.carouselArrow {
+  z-index: 1;
+}
+
+.arrowContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  border-radius: 50%;
+  padding: 5px 10px;
+  background-color: rgb(168, 168, 168);
+}
+
+.arrowLeft {
+  left: 30px;
+}
+
+.arrowRight {
+  right: 10px;
+}
+
+.arrowContainer:hover {
+  background-color: gray;
+}
