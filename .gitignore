@@ -1,0 +1,30 @@
+# Dependency directories
+node_modules/
+/.pnp
+.pnp.js
+
+# TypeScript v1 declaration files
+typings/
+
+# testing
+/coverage
+
+# production
+/build
+
+# dotenv environment variables file
+.env
+.env.test
+
+# react-scripts
+build
+
+# storybook
+storybook-static
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
