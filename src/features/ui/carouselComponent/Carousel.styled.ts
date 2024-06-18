@@ -1,4 +1,4 @@
-import { ICarouselItem } from "@utils/typesUtils";
+import { ICarouselItem } from "../../../utils/typesUtils";
 import styled from "styled-components";
 
 const Container = styled.div<ICarouselItem>`
@@ -27,6 +27,7 @@ const Container = styled.div<ICarouselItem>`
     display: flex;
     align-items: center;
     height: inherit;
+    touch-action: none;
   }
 
   .handler {
@@ -54,30 +55,32 @@ const Container = styled.div<ICarouselItem>`
     }
   }
 
-  .btn_group {
+  .left,
+  .right {
     position: absolute;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
+    padding: 12px;
+    background-color: #666a;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
 
-    .left,
-    .right {
-      border-radius: 100%;
-      padding: 12px;
-      background-color: #666a;
-      cursor: pointer;
-      transition: background-color 0.3s ease-in-out;
-      width: 50px;
-      height: 50px;
-      display: grid;
-      place-items: center;
-
-      &:hover {
-        background-color: #666d;
-      }
+    &:hover {
+      background-color: #666d;
     }
+  }
+
+  .left {
+    left: 0;
+  }
+
+  .right {
+    right: 0;
   }
 `;
 

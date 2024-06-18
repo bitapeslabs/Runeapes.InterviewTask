@@ -3,18 +3,18 @@ import * as S from "./item.styled";
 import { IItemData } from "../../../utils/typesUtils";
 
 export const Item = ({
-  data,
   $itemWidth,
   $isInfinite,
   $viewCount,
   $totalCount,
   $index,
   id,
-  $gap,
   movePosition,
+  $backgroundColor
 }: IItemData) => {
   const [move, setMove] = useState<number>(0);
   const [positionMove, setPositionMove] = useState<number>(0);
+  const [zIndex, setZIndex] = useState<number>(0)
 
   useEffect(() => {
     if ($index + Math.floor($totalCount / 2) <= $totalCount) {
@@ -30,11 +30,17 @@ export const Item = ({
         setMove(($totalCount - $index) * 100);
       }
     }
+
+    if (id >= $index && ((id < $index && id + $totalCount < $totalCount + $viewCount - 1) || (id < $index + $viewCount))) {
+      setZIndex(5);
+    }
   }, [$index]);
 
   useEffect(() => {
     if (movePosition) {
       setPositionMove(move + (movePosition / $itemWidth) * 100);
+    } else {
+      setMove(Math.round(positionMove))
     }
   }, [movePosition]);
 
@@ -46,9 +52,9 @@ export const Item = ({
       $viewCount={$viewCount}
       $totalCount={$totalCount}
       $translate={!movePosition ? move : positionMove}
-      $gap={$gap}
-    >
-      <img src={data.image} alt="" />
+      $backgroundColor={$backgroundColor}
+      $zIndex={zIndex}
+    ><div className="title">Title {id + 1}</div>
     </S.Container>
   );
 };

@@ -25,7 +25,7 @@ export default [
       }),
       terser(),
     ],
-    external: ["react", "react-dom", "styled-components"],
+    external: Object.keys(packageJson.peerDependencies || {}),
   },
   {
     input: "src/index.ts",
