@@ -1,8 +1,8 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
-import Carousel from ".";
-import { defaultProps } from "./defaultProps";
-import "../../styles/styles.module.css";
+import Carousel from "../components/carousel";
+import { defaultProps } from "../components/carousel/defaultProps";
+import "../styles/styles.module.css";
 
 const meta = {
   title: "Components/Carousel",
