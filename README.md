@@ -1,54 +1,46 @@
-# Runeapes Interview Task
+# Getting Started with Create React App
 
-## Position: Storybook / Design System Engineer (2.5k USD/m)
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-#### DEADLINE: 6/21/2024 
-Applications after this time period will not be considered. As mentioned, we will go with the first person that is able to submit a PR that is able to complete the task
+## Available Scripts
 
-### Required Skills
-- TypeScript (TS)
-- Styled Components
-- Experience with Design Systems
-- Storybook
-- React
+In the project directory, you can run:
 
-### Task Overview
+### `npm start`
 
-Your task is to create a React component library with a single component: the Carousel.
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The component library should have a storybook that showcases the Carousel made.
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-#### Important: This carousel component needs to be built from scratch, you cannot use "carousel" libraries. Libraries for handling dragging on mobile are allowed, however
+### `npm test`
 
-### Carousel Component Requirements
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-1. **Children and Width**:
-   - The Carousel component should accept multiple children of the same width (cards).
+### `npm run build`
 
-2. **isInfinite Prop**:
-   - `isInfinite` (boolean): Determines if the carousel is infinite.
-   - If `isInfinite` is `true`, the carousel loops infinitely.
-   - If `isInfinite` is `false`, the carousel scrolls only through the available cards.
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-   **Example**: Check our website [Runeapes](https://runeapes.io) at the section "Tools even chimps could use" for an example of an infinite carousel (not draggable)
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-3. **Interaction**:
-   - **Mobile**: The carousel you create SHOULD be draggable. The scroll speed should reflect the drag speed:
-     - Slow drag: scrolls fewer cards.
-     - Fast drag: scrolls more cards.
-   - **Desktop**: The carousel should use buttons for navigation.
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### Final Steps
+### `npm run eject`
 
-1. **Component Library**:
-   - Create a component library for the Carousel.
-   - Use a tool like Rollup to prepare it for upload to npm.
-   - Ensure to export both the Carousel component and its types.
-   - Upload to npm and create a repo with the source code
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-2. **Submission**:
-   - Submit a pull request (PR) with the npm package name.
-   - In the same PR, include a link to the repo with the source code for the component library with the carousel.
-   - If you are applying from Discord, send the PR link to @mork1e on Discord.
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-### Good Luck!
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
