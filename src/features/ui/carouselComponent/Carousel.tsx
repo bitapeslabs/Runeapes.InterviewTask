@@ -81,7 +81,7 @@ const Carousel = ({
   };
 
   const bind = useDrag(
-    ({ down, movement: [mx], velocity, direction: [xDir] }) => {
+    ({ down, movement: [mx] }) => {
       if (!down) {
         // if (Math.abs(move) > itemWidth) {
         //   setIndex(Math.round(move / itemWidth));
@@ -91,7 +91,6 @@ const Carousel = ({
         setCount(0);
       } else {
         if (Math.abs(mx) > itemWidth * (count + 1)) {
-          console.log("Here???", count);
           setCount(count + 1);
           setIndex(mx >= 0 ? 1 : -1);
         }

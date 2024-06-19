@@ -6,9 +6,8 @@ const Container = styled.div<{
   $index: number;
   $viewCount: number;
   $totalCount: number;
-  $translate: number;
   $backgroundColor: string;
-  $zIndex: number
+  $zIndex: number;
 }>`
   display: flex;
   align-items: center;
@@ -18,12 +17,11 @@ const Container = styled.div<{
   cursor: pointer;
   width: ${({ $itemWidth }) => $itemWidth + "px"};
   height: inherit;
-  transform: ${({ $translate }) => "translateX(" + $translate + "%)"};
   transition: transform 0.2s ease-in-out;
-  z-index: ${({$zIndex}) => $zIndex};
-  
+  z-index: ${({ $zIndex }) => $zIndex};
+
   .title {
-    background-color: ${({$backgroundColor}) => $backgroundColor};
+    background-color: ${({ $backgroundColor }) => $backgroundColor};
     width: 100%;
     height: 100%;
     user-select: none;
