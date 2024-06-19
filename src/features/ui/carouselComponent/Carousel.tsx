@@ -83,21 +83,26 @@ const Carousel = ({
   const bind = useDrag(
     ({ down, movement: [mx], velocity, direction: [xDir] }) => {
       if (!down) {
-        if (Math.abs(move) > itemWidth) {
-          setIndex(Math.round(move / itemWidth));
-        }
+        // if (Math.abs(move) > itemWidth) {
+        //   setIndex(Math.round(move / itemWidth));
+        // }
+        // setIndex(Math.round(velocity[0]) * xDir);
         setMove(0);
-        setIndex(Math.round(velocity[0]) * xDir);
         setCount(0);
       } else {
         if (Math.abs(mx) > itemWidth * (count + 1)) {
+          console.log("Here???", count);
           setCount(count + 1);
-          setIndex(Math.round(mx / itemWidth));
+          setIndex(mx >= 0 ? 1 : -1);
         }
         setMove(mx);
       }
     }
   );
+
+  useEffect(() => {
+    console.log("Change index", state.context.index);
+  }, [state.context.index]);
 
   return (
     <S.Container

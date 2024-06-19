@@ -44,7 +44,7 @@ export const Item = ({
 
   useEffect(() => {
     if (movePosition) {
-      setPositionMove(move + (movePosition / $itemWidth) * 100);
+      setPositionMove(move + ((movePosition % $itemWidth) / $itemWidth) * 100);
     }
     // else {
     //   setMove(Math.round(positionMove / 100) * 100);
