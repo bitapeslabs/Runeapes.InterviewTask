@@ -4,8 +4,6 @@ import { Arrows } from '../components/Arrows'
 import { Indexes } from '../components/Indexes'
 import './Carousel.css'
 
-// import { Carousel as CarouselEle, Arrows, Indexes } from '../../dist/index.es'
-
 const SectionContainerCss = {
   display: 'flex',
   flexDirection: 'column',
@@ -47,7 +45,6 @@ const Template = ({
   isInfinite,
   randomTileSizes,
   showIndexes,
-  startIndex,
   tileCount,
   displayCount,
   showArrows,

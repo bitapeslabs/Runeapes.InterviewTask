@@ -1,13 +1,11 @@
 import React, { useCallback, useMemo } from 'react'
-import styles from './Arrows.module.css'
+import ArrowButton from './StyledComponents/Arrow/ArrowButton.tsx'
+import ArrowIcon from './StyledComponents/Arrow/ArrowIcon.tsx'
 
 export const Arrows = ({ isLeft, isHidden, scrollBy, scrollCount, arrowProps, arrowIconProps }) => {
   const arrowClassName = useMemo(
-    () =>
-      `${styles.arrow} ${isLeft ? styles.leftArrow : styles.rightArrow} ${isHidden ? styles.isArrowHidden : ''} ${
-        arrowProps?.className || ''
-      }`,
-    [arrowProps?.className, isLeft, isHidden],
+    () => `${arrowProps?.className || ''}`,
+    [arrowProps?.className],
   )
 
   const onClick = useCallback(
@@ -25,19 +23,19 @@ export const Arrows = ({ isLeft, isHidden, scrollBy, scrollCount, arrowProps, ar
   )
 
   const iconClassName = useMemo(
-    () =>
-      `${styles.arrowIcon} ${isLeft ? styles.leftArrowIcon : styles.rightArrowIcon} ${arrowIconProps?.className || ''}`,
-    [arrowIconProps?.className, isLeft],
+    () => `${arrowIconProps?.className || ''}`, [arrowIconProps?.className],
   )
 
   return (
-    <button
+    <ArrowButton
       {...arrowProps}
+      isLeft={isLeft}
+      isHidden={isHidden}
       tabIndex={-1} //no focus by default for ADA
       className={arrowClassName}
       onClick={onClick(arrowProps?.onClick, isLeft ? -scrollCount : scrollCount)}
     >
-      <span {...arrowIconProps} className={iconClassName} />
-    </button>
+      <ArrowIcon isLeft={isLeft} {...arrowIconProps} className={iconClassName} />
+    </ArrowButton>
   )
 }

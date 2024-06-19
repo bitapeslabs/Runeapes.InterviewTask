@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useRef } from 'react'
-import styles from './Indexes.module.css'
+import IndexContainer from './StyledComponents/Index/IndexContainer'
+import IndexIconButton from './StyledComponents/Index/IndexIconButton'
 
 export const Indexes = ({
   activeIndexes,
@@ -16,45 +17,44 @@ export const Indexes = ({
   const width = useMemo(() => `calc((100% - ${(indexesPerRow - 1) * gap}px) / ${indexesPerRow})`, [indexesPerRow])
 
   const containerClassName = useMemo(
-    () => `${styles.indexContainer} ${indexContainerProps?.className || ''}`,
-    [indexContainerProps?.className],
+    () => `${indexContainerProps?.className || ''}`, [indexContainerProps?.className],
   )
 
-  const iconClassName = useMemo(() => `${styles.index} ${indexProps?.className || ''}`, [indexProps?.className])
+  const iconClassName = useMemo(() => `${indexProps?.className || ''}`, [indexProps?.className])
 
   const onClick = useCallback(
     (callback, scrollCount) => (e) => {
       if (typeof callback === 'function') {
         callback(e)
       }
-
       scrollBy(scrollCount)
     },
     [scrollBy],
   )
 
   return (
-    <div
+    <IndexContainer
       {...indexContainerProps}
       ref={containerRef}
       className={containerClassName}
-      style={{ gap: `${gap}px`, ...indexContainerProps?.style }}
+      gap={gap}
+      style={{ ...indexContainerProps?.style }}
     >
       {slideAnchors?.map((_, i) => (
-        <button
-          tabIndex={-1} 
+        <IndexIconButton
+          tabIndex={-1}
           key={i}
           {...indexProps}
           className={iconClassName}
+          activeIndex={activeIndexes.includes(i)}
+          borderWidth={borderWidth}
           style={{
-            backgroundColor: activeIndexes.includes(i) ? 'black' : 'transparent',
             width,
-            borderWidth: `${borderWidth}px`,
             ...indexProps?.style,
           }}
           onClick={onClick(indexProps?.onClick, i - startIndex)}
         />
       ))}
-    </div>
+    </IndexContainer>
   )
 }

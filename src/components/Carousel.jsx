@@ -1,6 +1,8 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useMemo, useRef, useCallback, useEffect, useLayoutEffect } from 'react'
-import styles from './Carousel.module.css'
+import CarouselSlidesAndArrowsContainer from './StyledComponents/Carousel/CarouselSlidesAndArrowsContainer.tsx'
+import CarouselSlidesOuterContainer from './StyledComponents/Carousel/CarouselSlidesOuterContainer.tsx'
+import CarouselSlidesContainer from './StyledComponents/Carousel/CarouselSlidesContainer.tsx'
+import CarouselContainer from './StyledComponents/Carousel/CarouselContainer.tsx'
 
 const getClientXOffset = (e) => e?.touches?.[0]?.clientX || e?.clientX || 0
 
@@ -19,7 +21,6 @@ const calcMinWidth = (slideAnchors, count) =>
   slideAnchors?.length && count && count > 0
     ? slideAnchors.reduce((acc, { start }, i) => {
       const groupWidth = slideAnchors[Math.min(i + count - 1, slideAnchors.length - 1)].end - start
-
       return groupWidth > acc ? groupWidth : acc
     }, 0)
     : 0
@@ -307,11 +308,11 @@ export const Carousel = ({
   const onResize = () => {
     const newSlideAnchors = calculateAnchors(slidesRefs, gridGap, isInfinite)
     if (newSlideAnchors?.length) {
-      const containerWidth = slideContainerRef.current.clientWidth
+      const containerWidth = slideContainerRef.current.clientWidth;
 
       const newClonesLength = calcClonesLength(newSlideAnchors)
 
-      const lastEnd = newSlideAnchors[newSlideAnchors.length - 1].end
+      const lastEnd = newSlideAnchors[newSlideAnchors.length - 1].end;
 
       const newMaxIndex = getBoundIndex(
         newSlideAnchors.findIndex(({ start }) => start + containerWidth >= lastEnd),
@@ -438,14 +439,14 @@ export const Carousel = ({
       touchStartRef.current = xOffset
       touchEndRef.current = xOffset
     },
-    [isDraggable,  setIsDragging],
+    [isDraggable, setIsDragging],
   )
 
   const onTouchMove = useCallback(
     (e) => {
       e.stopPropagation()
 
-      if (areArrowsLocked.current || isMomentum.current || !isDraggable || !isDragging ) {
+      if (areArrowsLocked.current || isMomentum.current || !isDraggable || !isDragging) {
         return
       }
 
@@ -468,7 +469,7 @@ export const Carousel = ({
         cancelAnimationFrame(momentumDebounceId.current)
       }
 
-      if (areArrowsLocked.current || !isDraggable ||  e.touches?.length > 0) {
+      if (areArrowsLocked.current || !isDraggable || e.touches?.length > 0) {
         return
       }
 
@@ -523,13 +524,14 @@ export const Carousel = ({
       const scrollDelta = e.deltaX
       const scrollDirection = Math.sign(scrollDelta)
 
-    
+
 
       const newTranslateOffset =
         translateOffset.current - scrollDirection * Math.min(scrollSpeed, Math.abs(scrollDelta))
 
-      // const debounceFunc = () => {
-      // }
+      const debounceFunc = () => {
+        console.log("removed")
+      }
 
       if (scrollDebounceId.current) {
         clearTimeout(scrollDebounceId.current)
@@ -592,12 +594,12 @@ export const Carousel = ({
         }
       }
     },
-    [index, index.left, index.right, isInfinite, isDragging, isDraggable,   onArrowClick],
+    [index, index.left, index.right, isInfinite, isDragging, isDraggable, onArrowClick],
   )
 
   const onSlideKeyDown = useCallback(
     (e) => {
-      if (areArrowsLocked.current || (isDraggable && isDragging) ) {
+      if (areArrowsLocked.current || (isDraggable && isDragging)) {
         e.preventDefault()
         e.stopPropagation()
       }
@@ -614,7 +616,7 @@ export const Carousel = ({
   }, [setIsHovering])
 
   useEffect(() => {
-    if (!areArrowsLocked.current && !(isDraggable && isDragging) ) {
+    if (!areArrowsLocked.current && !(isDraggable && isDragging)) {
       if (momentumDebounceId.current) {
         cancelAnimationFrame(momentumDebounceId.current)
       }
@@ -646,8 +648,7 @@ export const Carousel = ({
   )
 
   return (
-    <div
-      className={styles.container}
+    <CarouselContainer
       style={{
         ...containerCss,
         ...style,
@@ -656,7 +657,7 @@ export const Carousel = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <div className={styles.slidesAndArrowsContainer} onMouseLeave={onTouchEnd}>
+      <CarouselSlidesAndArrowsContainer onMouseLeave={onTouchEnd}>
         {RenderArrows ? (
           <RenderArrows
             startIndex={index.left - clonesLength}
@@ -664,22 +665,16 @@ export const Carousel = ({
             activeIndexes={activeIndexes}
             isLeft={true}
             isRight={false}
-            isHidden={!isHovering ||isDragging || !showLeftArrow}
+            isHidden={!isHovering || isDragging || !showLeftArrow}
             scrollBy={onArrowClick}
             arrowProps={arrowLeftProps}
             scrollCount={arrowScrollCount}
           />
         ) : null}
-        <div ref={slidesOuterContainerRef} className={styles.slidesOuterContainer}>
-          <ul
+        <CarouselSlidesOuterContainer ref={slidesOuterContainerRef}>
+          <CarouselSlidesContainer
             ref={slideContainerRef}
-            className={styles.slidesContainer}
             style={{
-              display: 'flex',
-              flexDirection: 'row',
-              listStyleType: 'none',
-              margin: '0px',
-              padding: '0px',
               ...slideContainerStyle,
             }}
             onTouchStart={onTouchStart}
@@ -695,6 +690,7 @@ export const Carousel = ({
               <li
                 style={{
                   paddingRight: `${!isInfinite && i === slides.length - 1 ? 0 : gridGap}px`,
+                  listStyle:'none',
                   ...slideStyle,
                 }}
                 ref={slidesRefs[i]}
@@ -705,8 +701,8 @@ export const Carousel = ({
                 {slide}
               </li>
             ))}
-          </ul>
-        </div>
+          </CarouselSlidesContainer>
+        </CarouselSlidesOuterContainer>
         {RenderArrows ? (
           <RenderArrows
             startIndex={index.left - clonesLength}
@@ -714,13 +710,13 @@ export const Carousel = ({
             activeIndexes={activeIndexes}
             isLeft={false}
             isRight={true}
-            isHidden={!isHovering ||  isDragging || !showRightArrow}
+            isHidden={!isHovering || isDragging || !showRightArrow}
             scrollBy={onArrowClick}
             arrowProps={arrowRightProps}
             scrollCount={arrowScrollCount}
           />
         ) : null}
-      </div>
+      </CarouselSlidesAndArrowsContainer>
       {RenderIndexes ? (
         <RenderIndexes
           startIndex={index.left - clonesLength}
@@ -733,6 +729,6 @@ export const Carousel = ({
           indexProps={indexProps}
         />
       ) : null}
-    </div>
+    </CarouselContainer>
   )
 }
