@@ -1,0 +1,25 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  margin-top: auto;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.slide-container {
+  border-radius: 40px;
+  overflow: hidden;
+  height: 400px;
+}
+
+.slide-container > img {
+  width: 100%;
+  height: 100%;
+}
