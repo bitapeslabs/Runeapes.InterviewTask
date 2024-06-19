@@ -12,9 +12,9 @@ type Story = StoryObj<typeof Carousel>;
 export const InfinitCarousel: Story = (args) => <Carousel {...args} />;
 InfinitCarousel.args = {
   isInfinite: true,
-  datas: 8,
+  datas: 10,
   viewCount: 3,
   fullWidth: false,
   viewHeight: 500,
-  viewWidth: 800
+  viewWidth: 800,
 };

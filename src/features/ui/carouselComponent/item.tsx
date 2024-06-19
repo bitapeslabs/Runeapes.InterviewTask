@@ -10,11 +10,11 @@ export const Item = ({
   $index,
   id,
   movePosition,
-  $backgroundColor
+  $backgroundColor,
 }: IItemData) => {
   const [move, setMove] = useState<number>(0);
   const [positionMove, setPositionMove] = useState<number>(0);
-  const [zIndex, setZIndex] = useState<number>(0)
+  const [zIndex, setZIndex] = useState<number>(0);
 
   useEffect(() => {
     if ($index + Math.floor($totalCount / 2) <= $totalCount) {
@@ -31,17 +31,24 @@ export const Item = ({
       }
     }
 
-    if (id >= $index && ((id < $index && id + $totalCount < $totalCount + $viewCount - 1) || (id < $index + $viewCount))) {
+    if (
+      id >= $index &&
+      ((id < $index && id + $totalCount < $totalCount + $viewCount - 1) ||
+        id < $index + $viewCount)
+    ) {
       setZIndex(5);
+    } else {
+      setZIndex(0);
     }
   }, [$index]);
 
   useEffect(() => {
     if (movePosition) {
       setPositionMove(move + (movePosition / $itemWidth) * 100);
-    } else {
-      setMove(Math.round(positionMove))
     }
+    // else {
+    //   setMove(Math.round(positionMove / 100) * 100);
+    // }
   }, [movePosition]);
 
   return (
@@ -54,7 +61,8 @@ export const Item = ({
       $translate={!movePosition ? move : positionMove}
       $backgroundColor={$backgroundColor}
       $zIndex={zIndex}
-    ><div className="title">Title {id + 1}</div>
+    >
+      <div className="title">Title {id + 1}</div>
     </S.Container>
   );
 };

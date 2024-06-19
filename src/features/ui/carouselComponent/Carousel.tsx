@@ -21,8 +21,9 @@ const Carousel = ({
   const { width = 0, height = 0 } = useWindowSize();
   const [itemWidth, setItemWidth] = useState<number>(0);
   const [move, setMove] = useState<number>(0);
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [colors, setColors] = useState<string[]>([])
+  const [count, setCount] = useState<number>(0);
+  // const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [colors, setColors] = useState<string[]>([]);
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,13 +34,13 @@ const Carousel = ({
     }
 
     if (width < 768) {
-      setIsMobile(true);
+      // setIsMobile(true);
     }
   }, [width, fullWidth]);
 
   useEffect(() => {
-    setColors(generateRandomColors(datas))
-  }, [datas])
+    setColors(generateRandomColors(datas));
+  }, [datas]);
 
   const handleChangeIndex = (index: number) => {
     if (isInfinite) {
@@ -60,32 +61,43 @@ const Carousel = ({
     }
   };
 
-  const bind = useDrag(({ down, movement: [mx], velocity, direction: [xDir] }) => {
-    if (!down) {
-      if (isInfinite) {
-        send({
-          type: "SET_INDEX",
-          index:
-            (state.context.index - Math.round(velocity[0]) * xDir + datas) %
-            datas,
-        });
-      } else {
-        send({
-          type: "SET_INDEX",
-          index:
-            state.context.index - Math.round(velocity[0]) * xDir < 0
-              ? 0
-              : state.context.index - Math.round(velocity[0]) * xDir >
-                datas - viewCount
-                ? datas - viewCount
-                : state.context.index - Math.round(velocity[0]) * xDir,
-        });
-      }
-
+  const setIndex = (index: number) => {
+    if (isInfinite) {
+      send({
+        type: "SET_INDEX",
+        index: (state.context.index - index + datas) % datas,
+      });
     } else {
-      setMove(mx)
+      send({
+        type: "SET_INDEX",
+        index:
+          state.context.index - index < 0
+            ? 0
+            : state.context.index - index > datas - viewCount
+              ? datas - viewCount
+              : state.context.index - index,
+      });
     }
-  })
+  };
+
+  const bind = useDrag(
+    ({ down, movement: [mx], velocity, direction: [xDir] }) => {
+      if (!down) {
+        if (Math.abs(move) > itemWidth) {
+          setIndex(Math.round(move / itemWidth));
+        }
+        setMove(0);
+        setIndex(Math.round(velocity[0]) * xDir);
+        setCount(0);
+      } else {
+        if (Math.abs(mx) > itemWidth * (count + 1)) {
+          setCount(count + 1);
+          setIndex(Math.round(mx / itemWidth));
+        }
+        setMove(mx);
+      }
+    }
+  );
 
   return (
     <S.Container
