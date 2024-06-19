@@ -42,40 +42,23 @@ const Carousel = ({
     setColors(generateRandomColors(datas));
   }, [datas]);
 
-  const handleChangeIndex = (index: number) => {
-    if (isInfinite) {
-      send({
-        type: "SET_INDEX",
-        index: (state.context.index + index + datas) % datas,
-      });
-    } else {
-      send({
-        type: "SET_INDEX",
-        index:
-          state.context.index + index < 0
-            ? 0
-            : state.context.index + index > datas - viewCount
-              ? datas - viewCount
-              : state.context.index + index,
-      });
-    }
-  };
-
   const setIndex = (index: number) => {
+    const currentIndex = state.context.index;
+    const dataLength = datas;
+    const maxIndex = dataLength - viewCount;
+
     if (isInfinite) {
+      const newIndex = (currentIndex - index + dataLength) % dataLength
       send({
         type: "SET_INDEX",
-        index: (state.context.index - index + datas) % datas,
+        index: newIndex,
       });
     } else {
+      const newIndex = currentIndex - index;
+      const clampedIndex = Math.max(0, Math.min(newIndex, maxIndex));
       send({
         type: "SET_INDEX",
-        index:
-          state.context.index - index < 0
-            ? 0
-            : state.context.index - index > datas - viewCount
-              ? datas - viewCount
-              : state.context.index - index,
+        index: clampedIndex,
       });
     }
   };
@@ -99,17 +82,13 @@ const Carousel = ({
     }
   );
 
-  useEffect(() => {
-    console.log("Change index", state.context.index);
-  }, [state.context.index]);
-
   return (
     <S.Container
       $viewWidth={fullWidth ? width : viewWidth!}
       $viewHeight={viewHeight ? viewHeight : height}
       $isInfinite={isInfinite}
     >
-      <div className="left" onClick={() => handleChangeIndex(-1)}>
+      <div className="left" onClick={() => setIndex(1)}>
         Prev
       </div>
       <div className="slider" ref={sliderRef} {...bind()}>
@@ -127,7 +106,7 @@ const Carousel = ({
           />
         ))}
       </div>
-      <div className="right" onClick={() => handleChangeIndex(1)}>
+      <div className="right" onClick={() => setIndex(-1)}>
         Next
       </div>
     </S.Container>

@@ -32,13 +32,18 @@ export const Item = ({
     }
 
     if (
-      id >= $index &&
-      ((id < $index && id + $totalCount < $totalCount + $viewCount) ||
-        id <= $index + $viewCount)
+      ($index > 0 &&
+        $index <= $viewCount + 3 &&
+        id >= $index - 1 &&
+        id <= $index + $viewCount) ||
+      ($index > $viewCount + 3 &&
+        $index < $totalCount &&
+        ((id >= $index - 1 && id < $totalCount) ||
+          id + $totalCount <= $index + $viewCount)) || ($index === 0 && (id <= $index + $viewCount && id >= 0 || id === $totalCount - 1))
     ) {
       setZIndex(5);
     } else {
-      setZIndex(0);
+      setZIndex(-1);
     }
   }, [$index]);
 
@@ -51,10 +56,6 @@ export const Item = ({
     // }
   }, [movePosition]);
 
-  useEffect(() => {
-    console.log('positionMove', positionMove)
-  }, [positionMove])
-
   return (
     <S.Container
       $itemWidth={$itemWidth}
@@ -63,8 +64,10 @@ export const Item = ({
       $viewCount={$viewCount}
       $totalCount={$totalCount}
       $backgroundColor={$backgroundColor}
-      $zIndex={zIndex}
-      style={{ transform: `translateX(${!movePosition ? move : move + ((movePosition % $itemWidth) / $itemWidth) * 100}%)` }}
+      style={{
+        transform: `translateX(${!movePosition ? move : move + ((movePosition % $itemWidth) / $itemWidth) * 100}%)`,
+        zIndex: zIndex
+      }}
     >
       <div className="title">Title {id + 1}</div>
     </S.Container>

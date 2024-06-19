@@ -7,7 +7,6 @@ const Container = styled.div<{
   $viewCount: number;
   $totalCount: number;
   $backgroundColor: string;
-  $zIndex: number;
 }>`
   display: flex;
   align-items: center;
@@ -18,7 +17,6 @@ const Container = styled.div<{
   width: ${({ $itemWidth }) => $itemWidth + "px"};
   height: inherit;
   transition: transform 0.2s ease-in-out;
-  z-index: ${({ $zIndex }) => $zIndex};
 
   .title {
     background-color: ${({ $backgroundColor }) => $backgroundColor};
