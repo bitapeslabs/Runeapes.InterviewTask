@@ -1,17 +1,20 @@
 import styled from "styled-components";
 
-export const CarouselContainer = styled.div<{ isInfinite: boolean }>`
-  position: relative;
+export const CarouselContainer = styled.div`
   display: flex;
-  justify-content: ${({ isInfinite }) => (isInfinite ? `center` : `start`)};
+  position: relative;
+  width: 100%;
+  height: 500px;
+  justify-content: center;
   overflow: hidden;
 `;
 
-export const CarouselTrack = styled.div<{ translateX: number; deltaX: number }>`
+export const CarouselTrack = styled.div`
   display: flex;
-  transform: ${({ translateX, deltaX }) =>
-    `translateX(${translateX + deltaX}px)`};
-  transition: ${({ deltaX }) => `transform ${deltaX ? "0" : "0.8"}s ease-out`};
+  justify-content: center;
+  align-items: center;
+  transition: all 0.8s ease-in-out;
+  background-color: black;
 `;
 
 export const CarouselButton = styled.button`
