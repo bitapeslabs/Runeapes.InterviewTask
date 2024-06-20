@@ -38,7 +38,7 @@ export const Item = ({
 
   /**
    * Updates the transform style of the item based on the given position and current state.
-   * @param {number} position - The position to update the transform to.
+   * @param {number} position  The position to update the transform to.
    */
   const updateTransform = (position: number) => {
     const currentPosition = state.context.moveX;
@@ -60,6 +60,21 @@ export const Item = ({
           itemRef.current.style.transform = `translateX(${newPosition}%)`;
         }
       }
+    }
+  };
+
+  /**
+   * Sets the final transform position and updates the state.
+   * @param {number} finalIndex  The final index to set.
+   */
+
+  const setFinalInfo = (finalIndex: number) => {
+    if (itemRef.current) {
+      send({
+        type: "SET_MOVEX",
+        xmove: finalIndex * 100,
+      });
+      itemRef.current.style.transform = `translateX(${finalIndex * 100}%)`;
     }
   };
 
@@ -118,112 +133,96 @@ export const Item = ({
    * Handles the end of the drag event and applies inertia to the item's movement.
    */
   useEffect(() => {
-    if (!drag) {
+    if (!drag && itemRef.current) {
       send({ type: "SET_MOVEX", xmove: getInitialPosition() });
-      if (itemRef.current) {
-        if ($isInfinite) {
-          if (between > 0) {
-            const velo = Math.floor(velocity) * 100;
-            let count = 0;
-            let speed = velocity * 30;
-            const timer = setInterval(() => {
-              count += speed;
-              speed *= 0.95;
-              updateTransform(count);
-              if (count > velo) {
-                clearInterval(timer);
-                const position = getInitialPosition();
-                const finalIndex = Math.floor(position / 100);
-                if (itemRef.current) {
-                  itemRef.current.style.transform = `translateX(${finalIndex * 100}%)`;
-                  send({
-                    type: "SET_MOVEX",
-                    xmove: finalIndex * 100,
-                  });
-                }
-                if (position >= 0 && finalIndex !== $index) {
-                  setIndex(finalIndex);
-                }
+      const velocityLimit = Math.floor(velocity) * 100;
+      let speed = velocity * 6;
+      const speedDecay = 0.98;
+      let distanceTraveled = 0;
+
+      if ($isInfinite) {
+        const distance = between > 0 ? 1 : -1;
+        if (between > 0) {
+          const timer = setInterval(() => {
+            distanceTraveled += speed * distance;
+            speed *= speedDecay;
+            updateTransform(distanceTraveled);
+            if (Math.abs(distanceTraveled) > velocityLimit) {
+              clearInterval(timer);
+              const position = getInitialPosition();
+              const finalIndex = Math.floor(position / 100);
+              setFinalInfo(finalIndex);
+              if (position >= 0 && finalIndex !== $index) {
+                setIndex(finalIndex);
               }
-            }, 20);
-          } else if (between < 0) {
-            const velo = Math.floor(velocity) * 100;
-            let count = 0;
-            let speed = velocity * 14;
-            const timer = setInterval(() => {
-              count -= speed;
-              speed *= 0.95;
-              updateTransform(count);
-              if (Math.abs(count) > velo) {
-                clearInterval(timer);
-                const position = getInitialPosition();
-                const finalIndex = Math.floor(position / 100);
-                if (itemRef.current) {
-                  send({
-                    type: "SET_MOVEX",
-                    xmove: finalIndex * 100,
-                  });
-                  itemRef.current.style.transform = `translateX(${finalIndex * 100}%)`;
-                }
-                if (position >= 0 && finalIndex !== $index) {
-                  setIndex(finalIndex);
-                }
+            }
+          }, 50);
+        } else if (between < 0) {
+          const timer = setInterval(() => {
+            distanceTraveled += speed * distance;
+            speed *= speedDecay;
+            updateTransform(distanceTraveled);
+            if (Math.abs(distanceTraveled) > velocityLimit) {
+              clearInterval(timer);
+              const position = getInitialPosition();
+              const finalIndex = Math.floor(position / 100) + 1;
+              setFinalInfo(finalIndex);
+              if (position >= 0 && finalIndex !== $index) {
+                setIndex(finalIndex);
               }
-            }, 20);
-          }
-        } else {
-          const init = getInitialPosition();
-          if (between > 0 && init < 0) {
-            const velo = Math.floor(velocity) * 100;
-            let count = 0;
-            let speed = velocity * 30;
-            const timer = setInterval(() => {
-              count += speed;
-              speed *= 0.95;
-              updateTransform(count);
-              if (count > velo || init + count > 0) {
-                clearInterval(timer);
-                const position = getInitialPosition();
-                const finalIndex = Math.round(position / 100);
-                if (itemRef.current) {
-                  itemRef.current.style.transform = `translateX(${finalIndex * 100}%)`;
-                  send({
-                    type: "SET_MOVEX",
-                    xmove: finalIndex * 100,
-                  });
-                }
-                const index = (finalIndex + $totalCount) % $totalCount;
-                if (position < 0 && index !== $index) {
-                  setIndex(index);
-                }
+            }
+          }, 50);
+        }
+      } else {
+        const init = getInitialPosition();
+        if (between > 0 && init < 0) {
+          const timer = setInterval(() => {
+            distanceTraveled += speed;
+            speed *= speedDecay;
+            updateTransform(distanceTraveled);
+            if (
+              distanceTraveled > velocityLimit ||
+              init + distanceTraveled > 70
+            ) {
+              clearInterval(timer);
+              const position = getInitialPosition();
+              let finalIndex;
+              if (init + distanceTraveled > 0) {
+                finalIndex = 0;
+              } else {
+                finalIndex = Math.floor(position / 100);
               }
-            }, 20);
-          } else if (between < 0 && init > -700) {
-            const velo = Math.floor(velocity) * 100;
-            let count = 0;
-            let speed = velocity * 14;
-            const timer = setInterval(() => {
-              count -= speed;
-              speed *= 0.95;
-              updateTransform(count);
-              if (Math.abs(count) > velo || init + count < -700) {
-                clearInterval(timer);
-                const position = getInitialPosition();
-                const finalIndex = Math.round(position / 100);
-                if (itemRef.current) {
-                  send({
-                    type: "SET_MOVEX",
-                    xmove: finalIndex * 100,
-                  });
-                  itemRef.current.style.transform = `translateX(${finalIndex * 100}%)`;
-                }
-                const index = (finalIndex + $totalCount - 1) % $totalCount;
-                if (position < 0 && index !== $index) {
-                  setIndex(index);
-                }
+              setFinalInfo(finalIndex);
+              const index = (finalIndex + $totalCount) % $totalCount;
+              if (position < 0 && index !== $index) {
+                setIndex(index);
               }
-            }, 20);
-          }
+            }
+          }, 50);
+        } else if (between < 0 && init > -700) {
+          const timer = setInterval(() => {
+            distanceTraveled -= speed;
+            speed *= speedDecay;
+            updateTransform(distanceTraveled);
+            if (
+              Math.abs(distanceTraveled) > velocityLimit ||
+              init + distanceTraveled < -770
+            ) {
+              clearInterval(timer);
+              const position = getInitialPosition();
+              let finalIndex;
+              if (init + distanceTraveled < -700) {
+                finalIndex = -7;
+              } else {
+                finalIndex = Math.floor(position / 100) + 1;
+              }
+              setFinalInfo(finalIndex);
+              const index = (finalIndex + $totalCount - 1) % $totalCount;
+              if (position < 0 && index !== $index) {
+                setIndex(index);
+              }
+            }
+          }, 50);
         }
       }
     }
