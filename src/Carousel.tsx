@@ -120,12 +120,14 @@ const Carousel: React.FC<ICarouselProps> = ({
 
     if (diff > 5) {
       setCurrentIndex(
-        (prevState) => prevState + parseInt((diff / 7).toString())
+        (prevState) => prevState + parseInt((diff / 6).toString())
       );
     }
 
     if (diff < -5) {
-      previousItem();
+      setCurrentIndex(
+        (prevState) => prevState - parseInt((-diff / 6).toString())
+      );
     }
 
     setTouchPosition(null);
@@ -295,7 +297,7 @@ const StyledCarousel = styled.div<{ visibleItemsCount: number }>`
   .carousel-content {
     display: flex;
     gap: 3px;
-    transition: all 250ms linear;
+    transition: all 250ms cubic-bezier(0, 0, 0, 1);
     -ms-overflow-style: none;
     /* hide scrollbar in IE and Edge */
     scrollbar-width: none;
