@@ -16,7 +16,6 @@ const Container = styled.div<{
   cursor: pointer;
   width: ${({ $itemWidth }) => $itemWidth + "px"};
   height: inherit;
-  transition: transform 0.2s ease-in-out;
 
   .title {
     background-color: ${({ $backgroundColor }) => $backgroundColor};

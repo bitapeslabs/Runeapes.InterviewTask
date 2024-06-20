@@ -20,8 +20,10 @@ const Carousel = ({
 
   const { width = 0, height = 0 } = useWindowSize();
   const [itemWidth, setItemWidth] = useState<number>(0);
-  const [move, setMove] = useState<number>(0);
-  const [count, setCount] = useState<number>(0);
+  const [drag, setDrag] = useState<boolean>(false);
+  const [between, setBetween] = useState<number>(0);
+  const [direction, setDirection] = useState<number>(0);
+  const [velocity, setVelocity] = useState<number>(0);
   // const [isMobile, setIsMobile] = useState<boolean>(false);
   const [colors, setColors] = useState<string[]>([]);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -45,42 +47,37 @@ const Carousel = ({
   const setIndex = (index: number) => {
     const currentIndex = state.context.index;
     const dataLength = datas;
-    const maxIndex = dataLength - viewCount;
+    const newIndex = (currentIndex + index + dataLength) % dataLength;
 
     if (isInfinite) {
-      const newIndex = (currentIndex - index + dataLength) % dataLength
       send({
         type: "SET_INDEX",
         index: newIndex,
       });
     } else {
-      const newIndex = currentIndex - index;
-      const clampedIndex = Math.max(0, Math.min(newIndex, maxIndex));
-      send({
-        type: "SET_INDEX",
-        index: clampedIndex,
-      });
+      if (!(newIndex > 0 && newIndex < viewCount)) {
+        send({
+          type: "SET_INDEX",
+          index: newIndex,
+        });
+      }
     }
   };
 
-  const bind = useDrag(
-    ({ down, movement: [mx] }) => {
-      if (!down) {
-        // if (Math.abs(move) > itemWidth) {
-        //   setIndex(Math.round(move / itemWidth));
-        // }
-        // setIndex(Math.round(velocity[0]) * xDir);
-        setMove(0);
-        setCount(0);
-      } else {
-        if (Math.abs(mx) > itemWidth * (count + 1)) {
-          setCount(count + 1);
-          setIndex(mx >= 0 ? 1 : -1);
-        }
-        setMove(mx);
-      }
+  const setDragIndex = (index: number) => {
+    send({ type: "SET_INDEX", index: index });
+  };
+
+  const bind = useDrag(({ down, movement: [mx], velocity }) => {
+    if (!down) {
+      setDrag(false);
+    } else {
+      setDrag(true);
+      setBetween(mx);
+      setVelocity(velocity[0]);
+      setDirection(0);
     }
-  );
+  });
 
   return (
     <S.Container
@@ -88,7 +85,13 @@ const Carousel = ({
       $viewHeight={viewHeight ? viewHeight : height}
       $isInfinite={isInfinite}
     >
-      <div className="left" onClick={() => setIndex(1)}>
+      <div
+        className="left"
+        onClick={() => {
+          setIndex(1);
+          setDirection(1);
+        }}
+      >
         Prev
       </div>
       <div className="slider" ref={sliderRef} {...bind()}>
@@ -100,13 +103,23 @@ const Carousel = ({
             $isInfinite={isInfinite}
             $viewCount={viewCount}
             $totalCount={datas}
-            movePosition={move}
             $index={state.context.index}
             $backgroundColor={colors[index]}
+            direction={direction}
+            drag={drag}
+            between={between}
+            velocity={velocity}
+            setIndex={setDragIndex}
           />
         ))}
       </div>
-      <div className="right" onClick={() => setIndex(-1)}>
+      <div
+        className="right"
+        onClick={() => {
+          setIndex(-1);
+          setDirection(-1);
+        }}
+      >
         Next
       </div>
     </S.Container>

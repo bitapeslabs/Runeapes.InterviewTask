@@ -16,13 +16,16 @@ export interface ICarouselItem {
 }
 
 export interface IItemData {
-  movePosition: number;
   $itemWidth: number;
   $isInfinite: boolean;
   $index: number;
-  $direction?: boolean;
   $viewCount: number;
   $totalCount: number;
   $backgroundColor: string;
+  drag: boolean;
+  between: number;
   id: number;
+  direction: number;
+  velocity: number;
+  setIndex: (index: number) => void;
 }
