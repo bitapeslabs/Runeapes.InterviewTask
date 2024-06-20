@@ -43,7 +43,6 @@ const tileCache = []
 
 const Template = ({
   isInfinite,
-  randomTileSizes,
   showIndexes,
   tileCount,
   displayCount,
@@ -97,14 +96,14 @@ const Template = ({
               key={i}
               tabIndex={0}
               className={'tile'}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  console.log(`Tile ${i} clicked`)
-                }
-              }}
+              // onKeyDown={(e) => {
+              //   if (e.key === 'Enter') {
+              //     console.log(`Tile ${i} clicked`)
+              //   }
+              // }}
               style={TileCss({
                 color: slide.color,
-                width: `${randomTileSizes ? slide.width : width}px`,
+                width: `${width}px`,
                 height: `${height}px`,
               })}
             >
@@ -123,12 +122,6 @@ export default {
   title: 'Carousel',
   argTypes: {
     isInfinite: {
-      control: false,
-      table: {
-        disable: true,
-      },
-    },
-    randomTileSizes: {
       control: false,
       table: {
         disable: true,
@@ -177,7 +170,6 @@ const carouselStoryArgs = {
   width: '150',
   height: '250',
   isInfinite: false,
-  randomTileSizes: false,
   showIndexes: true,
   showArrows: true,
   draggable: true,

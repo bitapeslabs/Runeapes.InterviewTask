@@ -3,10 +3,7 @@ import ArrowButton from './StyledComponents/Arrow/ArrowButton.tsx'
 import ArrowIcon from './StyledComponents/Arrow/ArrowIcon.tsx'
 
 export const Arrows = ({ isLeft, isHidden, scrollBy, scrollCount, arrowProps, arrowIconProps }) => {
-  const arrowClassName = useMemo(
-    () => `${arrowProps?.className || ''}`,
-    [arrowProps?.className],
-  )
+  const arrowClassName = useMemo(() => `${arrowProps?.className || ''}`, [arrowProps?.className])
 
   const onClick = useCallback(
     (callback, scrollCount) => (e) => {
@@ -17,14 +14,12 @@ export const Arrows = ({ isLeft, isHidden, scrollBy, scrollCount, arrowProps, ar
         callback(e)
       }
 
-      scrollBy(scrollCount)
+      // scrollBy(scrollCount)
     },
     [arrowProps?.onClick, scrollBy, isLeft],
   )
 
-  const iconClassName = useMemo(
-    () => `${arrowIconProps?.className || ''}`, [arrowIconProps?.className],
-  )
+  const iconClassName = useMemo(() => `${arrowIconProps?.className || ''}`, [arrowIconProps?.className])
 
   return (
     <ArrowButton

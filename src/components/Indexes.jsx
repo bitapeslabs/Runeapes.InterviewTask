@@ -16,18 +16,16 @@ export const Indexes = ({
   const borderWidth = 2
   const width = useMemo(() => `calc((100% - ${(indexesPerRow - 1) * gap}px) / ${indexesPerRow})`, [indexesPerRow])
 
-  const containerClassName = useMemo(
-    () => `${indexContainerProps?.className || ''}`, [indexContainerProps?.className],
-  )
+  const containerClassName = useMemo(() => `${indexContainerProps?.className || ''}`, [indexContainerProps?.className])
 
   const iconClassName = useMemo(() => `${indexProps?.className || ''}`, [indexProps?.className])
 
   const onClick = useCallback(
-    (callback, scrollCount) => (e) => {
+    (callback) => (e) => {
       if (typeof callback === 'function') {
         callback(e)
       }
-      scrollBy(scrollCount)
+      scrollBy()
     },
     [scrollBy],
   )

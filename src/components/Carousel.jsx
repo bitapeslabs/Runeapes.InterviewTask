@@ -20,9 +20,9 @@ const calculateAnchors = (slideRefs = [], gridGap, isInfinite) =>
 const calcMinWidth = (slideAnchors, count) =>
   slideAnchors?.length && count && count > 0
     ? slideAnchors.reduce((acc, { start }, i) => {
-      const groupWidth = slideAnchors[Math.min(i + count - 1, slideAnchors.length - 1)].end - start
-      return groupWidth > acc ? groupWidth : acc
-    }, 0)
+        const groupWidth = slideAnchors[Math.min(i + count - 1, slideAnchors.length - 1)].end - start
+        return groupWidth > acc ? groupWidth : acc
+      }, 0)
     : 0
 
 const ContainerCss = ({ displayCount, slideAnchors }) => {
@@ -79,10 +79,10 @@ export const Carousel = ({
     () =>
       isInfinite && clonesLength
         ? [
-          ...rawSlides.slice(rawSlides.length - clonesLength, rawSlides.length),
-          ...rawSlides,
-          ...rawSlides.slice(0, clonesLength),
-        ]
+            ...rawSlides.slice(rawSlides.length - clonesLength, rawSlides.length),
+            ...rawSlides,
+            ...rawSlides.slice(0, clonesLength),
+          ]
         : rawSlides,
     [children, rawSlides.length, isInfinite, clonesLength],
   )
@@ -308,11 +308,11 @@ export const Carousel = ({
   const onResize = () => {
     const newSlideAnchors = calculateAnchors(slidesRefs, gridGap, isInfinite)
     if (newSlideAnchors?.length) {
-      const containerWidth = slideContainerRef.current.clientWidth;
+      const containerWidth = slideContainerRef.current.clientWidth
 
       const newClonesLength = calcClonesLength(newSlideAnchors)
 
-      const lastEnd = newSlideAnchors[newSlideAnchors.length - 1].end;
+      const lastEnd = newSlideAnchors[newSlideAnchors.length - 1].end
 
       const newMaxIndex = getBoundIndex(
         newSlideAnchors.findIndex(({ start }) => start + containerWidth >= lastEnd),
@@ -344,7 +344,6 @@ export const Carousel = ({
   }, [slideCount, clonesLength, displayCount, gridGap, isInfinite])
 
   useEffect(() => {
-
     if (isInfinite) {
       onResize()
     }
@@ -363,8 +362,8 @@ export const Carousel = ({
             newBoundIndex > slideAnchors.length - clonesLength - 1
               ? newBoundIndex - rawSlides.length - arrowScrollCount
               : newBoundIndex < clonesLength - 1
-                ? rawSlides.length + arrowScrollCount + newBoundIndex
-                : null
+              ? rawSlides.length + arrowScrollCount + newBoundIndex
+              : null
 
           if (wrappedIndex != null) {
             slideContainerRef.current.style.transitionDuration = '0ms'
@@ -524,13 +523,11 @@ export const Carousel = ({
       const scrollDelta = e.deltaX
       const scrollDirection = Math.sign(scrollDelta)
 
-
-
       const newTranslateOffset =
         translateOffset.current - scrollDirection * Math.min(scrollSpeed, Math.abs(scrollDelta))
 
       const debounceFunc = () => {
-        console.log("removed")
+        console.log('removed')
       }
 
       if (scrollDebounceId.current) {
@@ -547,14 +544,7 @@ export const Carousel = ({
         scrollDebounceId.current = setTimeout(debounceFunc, 100)
       }
     },
-    [
-      isInfinite,
-      scrollSpeed,
-      minScrollX,
-      translateOffset,
-      isDragging,
-      setTranslateOffset,
-    ],
+    [isInfinite, scrollSpeed, minScrollX, translateOffset, isDragging, setTranslateOffset],
   )
 
   useEffect(() => {
@@ -690,7 +680,7 @@ export const Carousel = ({
               <li
                 style={{
                   paddingRight: `${!isInfinite && i === slides.length - 1 ? 0 : gridGap}px`,
-                  listStyle:'none',
+                  listStyle: 'none',
                   ...slideStyle,
                 }}
                 ref={slidesRefs[i]}

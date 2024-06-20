@@ -12,8 +12,8 @@
   "module": "./dist/index.es.js",
   "scripts": {
     "dev": "start-storybook -p 6006",
-    "lint": "eslint \"src/components/*.{js,jsx}\"",
-    "prettier": "prettier --write \"src/components/*.{js,jsx}\"",
+    "lint": "eslint \"src/components/*.{js,jsx,ts,tsx}\"",
+    "prettier": "prettier --write \"src/components/*.{js,jsx,ts,tsx}\"",
     "build-storybook": "build-storybook",
     "gh-deploy": "build-storybook && gh-pages -d storybook-static",
     "bundle": "rollup -c"
