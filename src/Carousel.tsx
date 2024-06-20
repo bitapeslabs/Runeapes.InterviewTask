@@ -297,7 +297,7 @@ const StyledCarousel = styled.div<{ visibleItemsCount: number }>`
   .carousel-content {
     display: flex;
     gap: 3px;
-    transition: all 250ms cubic-bezier(0, 0, 0, 1);
+    transition: transform 1000ms cubic-bezier(0, 0, 0, 1) 0s;
     -ms-overflow-style: none;
     /* hide scrollbar in IE and Edge */
     scrollbar-width: none;
