@@ -5,7 +5,7 @@
 #### DEADLINE: 6/21/2024 
 Applications after this time period will not be considered. As mentioned, we will go with the first person that is able to submit a PR that is able to complete the task
 
-### Required Skills
+### Required Skills 
 - TypeScript (TS)
 - Styled Components
 - Experience with Design Systems
