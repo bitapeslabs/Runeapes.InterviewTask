@@ -107,7 +107,7 @@ const Template = ({
                 height: `${height}px`,
               })}
             >
-              <span>{i}</span>
+              <span>{i+1}</span>
             </div>
           ))}
         </CarouselEle>
@@ -121,7 +121,7 @@ export default {
   title: 'Carousel',
   argTypes: {
     isInfinite: {
-      control: false,
+      control: {type: 'boolean'},
       table: {
         disable: true,
       },
@@ -168,7 +168,7 @@ export default {
 const carouselStoryArgs = {
   width: '150',
   height: '250',
-  isInfinite: false,
+  isInfinite: true,
   showIndexes: true,
   showArrows: true,
   draggable: true,
