@@ -269,7 +269,7 @@ export const Carousel = ({
       ? newSlideAnchors.slice(clonesLength, newSlideAnchors.length - clonesLength)
       : newSlideAnchors
 
-    const leftCount = coreSlideAnchors.reduce(
+      const leftCount = coreSlideAnchors.reduce(
       (acc, { width }, i) => {
         acc.width = acc.width + width
 
@@ -305,7 +305,6 @@ export const Carousel = ({
   }
 
   const onResize = () => {
-    console.log(slidesRefs)
     const newSlideAnchors = calculateAnchors(slidesRefs, gridGap, isInfinite)
     if (newSlideAnchors?.length) {
       const containerWidth = slideContainerRef.current.clientWidth
@@ -322,7 +321,6 @@ export const Carousel = ({
       const newLeftIndex = getBoundIndex(index.left - clonesLength + newClonesLength, newMaxIndex)
       const newTranslateOffset = getTranslateOffset(newLeftIndex, newSlideAnchors)
       const newScrollIndex = getScrollIndex(newTranslateOffset, newSlideAnchors)
-
       setClonesLength(newClonesLength)
       setIndexState(newScrollIndex)
       setSlideAnchors(newSlideAnchors)
