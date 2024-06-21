@@ -122,9 +122,6 @@ export default {
   argTypes: {
     isInfinite: {
       control: {type: 'boolean'},
-      table: {
-        disable: true,
-      },
     },
     width: {
       control: false,
