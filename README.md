@@ -2,7 +2,7 @@
 
 ## Position: Storybook / Design System Engineer (2.5k USD/m)
 
-#### DEADLINE: 6/21/2024 
+## CLOSED: NO MORE SUBMISSIONS WILL BE ADMITTED
 Applications after this time period will not be considered. As mentioned, we will go with the first person that is able to submit a PR that is able to complete the task
 
 ### Required Skills
