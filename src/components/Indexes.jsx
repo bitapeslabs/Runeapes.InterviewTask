@@ -21,11 +21,11 @@ export const Indexes = ({
   const iconClassName = useMemo(() => `${indexProps?.className || ''}`, [indexProps?.className])
 
   const onClick = useCallback(
-    (callback) => (e) => {
+    (callback, scrollCount) => (e) => {
       if (typeof callback === 'function') {
         callback(e)
       }
-      scrollBy()
+      scrollBy(scrollCount)
     },
     [scrollBy],
   )

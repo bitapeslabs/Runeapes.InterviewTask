@@ -107,8 +107,7 @@ const Template = ({
                 height: `${height}px`,
               })}
             >
-              <button>{i}</button>
-              <button>{i}</button>
+              <span>{i}</span>
             </div>
           ))}
         </CarouselEle>
@@ -152,7 +151,7 @@ export default {
       control: { type: 'boolean' },
     },
     tileCount: {
-      control: { type: 'range', min: 1, max: 50, step: 1 },
+      control: { type: 'range', min: 1, max: 20, step: 1 },
     },
     displayCount: {
       control: { type: 'range', min: 0, max: 50, step: 1 },
@@ -175,7 +174,7 @@ const carouselStoryArgs = {
   draggable: true,
   hasDragMomentum: true,
   dragMomentumSpeed: 25,
-  tileCount: 25,
+  tileCount: 10,
   displayCount: 4,
   gridGap: 15,
 }

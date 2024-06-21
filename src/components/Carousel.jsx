@@ -88,7 +88,6 @@ export const Carousel = ({
   )
 
   const slideCount = slides.length
-
   const slidesRefs = useMemo(
     () =>
       Array(slideCount)
@@ -306,6 +305,7 @@ export const Carousel = ({
   }
 
   const onResize = () => {
+    console.log(slidesRefs)
     const newSlideAnchors = calculateAnchors(slidesRefs, gridGap, isInfinite)
     if (newSlideAnchors?.length) {
       const containerWidth = slideContainerRef.current.clientWidth

@@ -14,7 +14,7 @@ export const Arrows = ({ isLeft, isHidden, scrollBy, scrollCount, arrowProps, ar
         callback(e)
       }
 
-      // scrollBy(scrollCount)
+      scrollBy(scrollCount)
     },
     [arrowProps?.onClick, scrollBy, isLeft],
   )
