@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 
 export interface CarouselProps {
@@ -21,10 +21,15 @@ const CarouselWrapper = styled.div<StyledProps>`
 const CarouselContainer = styled.div`
   display: flex;
   transition: transform 0.3s ease-in-out;
+  will-change: transform;
 `;
 
 const CarouselItem = styled.div<StyledProps>`
   flex: 0 0 ${(props) => `${props.width}px`};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: ${(props) => `${props.width}px`};
 `;
 
 const NavButton = styled.button`
@@ -36,6 +41,7 @@ const NavButton = styled.button`
   border: none;
   cursor: pointer;
   padding: 10px;
+  z-index: 1;
 `;
 
 const PrevButton = styled(NavButton)`
@@ -52,73 +58,49 @@ export const Carousel: React.FC<CarouselProps> = ({ children, isInfinite, width 
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
+  const [transition, setTransition] = useState(true);
 
   const childrenArray = React.Children.toArray(children);
   const totalItems = childrenArray.length;
 
-  useEffect(() => {
-    if (isDragging) {
-      const handleMouseMove = (event: MouseEvent) => {
-        setDragOffset(event.clientX - dragStart);
-      };
-
-      const handleMouseUp = () => {
-        setIsDragging(false);
-        if (Math.abs(dragOffset) > width / 2) {
-          if (dragOffset > 0) {
-            prevSlide();
-          } else {
-            nextSlide();
-          }
-        } else {
-          setDragOffset(0);
-        }
-      };
-
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, dragOffset, dragStart, width]);
-
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
+    setTransition(true);
     setCurrentIndex((prevIndex) => {
-      if (isInfinite || prevIndex < totalItems - 1) {
+      if (isInfinite) {
         return (prevIndex + 1) % totalItems;
+      } else {
+        return Math.min(prevIndex + 1, totalItems - 1);
       }
-      return prevIndex;
     });
-  };
+  }, [isInfinite, totalItems]);
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
+    setTransition(true);
     setCurrentIndex((prevIndex) => {
-      if (isInfinite || prevIndex > 0) {
+      if (isInfinite) {
         return (prevIndex - 1 + totalItems) % totalItems;
+      } else {
+        return Math.max(prevIndex - 1, 0);
       }
-      return prevIndex;
     });
-  };
+  }, [isInfinite, totalItems]);
 
-  const handleDragStart = (event: React.MouseEvent) => {
+  const handleDragStart = (event: React.MouseEvent | React.TouchEvent) => {
     setIsDragging(true);
-    setDragStart(event.clientX);
+    setTransition(false);
+    const startX = 'touches' in event ? event.touches[0].clientX : event.clientX;
+    setDragStart(startX);
   };
 
-  const handleTouchStart = (event: React.TouchEvent) => {
-    setIsDragging(true);
-    setDragStart(event.touches[0].clientX);
+  const handleDragMove = (event: React.MouseEvent | React.TouchEvent) => {
+    if (!isDragging) return;
+    const currentX = 'touches' in event ? event.touches[0].clientX : event.clientX;
+    setDragOffset(currentX - dragStart);
   };
 
-  const handleTouchMove = (event: React.TouchEvent) => {
-    setDragOffset(event.touches[0].clientX - dragStart);
-  };
-
-  const handleTouchEnd = () => {
+  const handleDragEnd = () => {
     setIsDragging(false);
+    setTransition(true);
     if (Math.abs(dragOffset) > width / 2) {
       if (dragOffset > 0) {
         prevSlide();
@@ -130,23 +112,56 @@ export const Carousel: React.FC<CarouselProps> = ({ children, isInfinite, width 
     }
   };
 
+  useEffect(() => {
+    if (isInfinite && currentIndex === totalItems) {
+      setTransition(false);
+      setCurrentIndex(0);
+    }
+    if (isInfinite && currentIndex === -1) {
+      setTransition(false);
+      setCurrentIndex(totalItems - 1);
+    }
+  }, [currentIndex, isInfinite, totalItems]);
+
+  useEffect(() => {
+    if (!isDragging) {
+      setDragOffset(0);
+    }
+  }, [isDragging]);
+
   return (
     <CarouselWrapper width={width}>
       <CarouselContainer
         ref={containerRef}
         style={{
-          transform: `translateX(${-currentIndex * width + dragOffset}px)`,
+          transform: `translateX(${(-currentIndex * width) + dragOffset}px)`,
+          transition: transition ? 'transform 0.3s ease-in-out' : 'none',
         }}
         onMouseDown={handleDragStart}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        onMouseMove={handleDragMove}
+        onMouseUp={handleDragEnd}
+        onMouseLeave={handleDragEnd}
+        onTouchStart={handleDragStart}
+        onTouchMove={handleDragMove}
+        onTouchEnd={handleDragEnd}
       >
-        {childrenArray.map((child, index) => (
-          <CarouselItem key={index} width={width}>
-            {child}
-          </CarouselItem>
-        ))}
+        {isInfinite ? (
+          <>
+            <CarouselItem width={width}>{childrenArray[totalItems - 1]}</CarouselItem>
+            {childrenArray.map((child, index) => (
+              <CarouselItem key={index} width={width}>
+                {child}
+              </CarouselItem>
+            ))}
+            <CarouselItem width={width}>{childrenArray[0]}</CarouselItem>
+          </>
+        ) : (
+          childrenArray.map((child, index) => (
+            <CarouselItem key={index} width={width}>
+              {child}
+            </CarouselItem>
+          ))
+        )}
       </CarouselContainer>
       <PrevButton onClick={prevSlide}>&lt;</PrevButton>
       <NextButton onClick={nextSlide}>&gt;</NextButton>
