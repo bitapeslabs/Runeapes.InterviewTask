@@ -15,6 +15,8 @@ const Carousel: React.FC<ICarouselProps> = ({
   const indicatorContainerRef = React.useRef<HTMLDivElement | null>(null);
   const [timeoutInProgress, setTimeoutInProgress] = React.useState(false);
   const [visibleItemsCount, setVisibleItemsCount] = React.useState<number>(3);
+  const [deltaX, setDeltaX] = React.useState<number>(0);
+  const [timeTouched, setTimeTouched] = React.useState(0);
 
   const originalItemsLength = React.useMemo(
     () => Children.count(children),
@@ -106,6 +108,7 @@ const Carousel: React.FC<ICarouselProps> = ({
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     const touchDown = e.touches[0].clientX;
     setTouchPosition(touchDown);
+    setTimeTouched(Date.now());
   };
 
   const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
@@ -118,19 +121,27 @@ const Carousel: React.FC<ICarouselProps> = ({
     const currentTouch = e.touches[0].clientX;
     const diff = touchDown - currentTouch;
 
-    if (diff > 5) {
+    setDeltaX(diff * 5);
+  };
+
+  const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
+    const endPosition = e.changedTouches[0].clientX;
+    const diff = endPosition - touchPosition;
+    const deltaT = Date.now() - timeTouched;
+    const velocity = Math.abs(diff / deltaT);
+    console.log(velocity);
+    if (diff < 0) {
       setCurrentIndex(
-        (prevState) => prevState + parseInt((diff / 6).toString())
+        (prevState) =>
+          prevState +
+          parseInt((velocity / 1.5 < 1 ? 1 : velocity / 1.5).toString())
       );
     }
-
-    if (diff < -5) {
+    if (diff > 0) {
       setCurrentIndex(
-        (prevState) => prevState - parseInt((-diff / 6).toString())
+        (prevState) => prevState - parseInt((velocity / 1.5).toString())
       );
     }
-
-    setTouchPosition(null);
   };
 
   const handleTransitionEnd = () => {
@@ -238,6 +249,7 @@ const Carousel: React.FC<ICarouselProps> = ({
           className={`carousel-content-wrapper`}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <div
             className={`carousel-content`}
@@ -332,8 +344,10 @@ const StyledCarousel = styled.div<{ visibleItemsCount: number }>`
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-      rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+    box-shadow:
+      rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+      rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+      rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
       rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
     transition: all 150ms linear;
   }
