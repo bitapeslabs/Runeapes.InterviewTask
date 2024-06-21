@@ -4,18 +4,19 @@ import styled from 'styled-components';
 export interface CarouselProps {
   children: React.ReactNode;
   isInfinite: boolean;
-  width: number;
+  visibleCards: number;  // Number of cards visible at once
+  cardWidth: number;  // Width of each card in pixels
 }
 
 interface StyledProps {
-  width: number;
+  cardWidth: number;
 }
 
-const CarouselWrapper = styled.div<StyledProps>`
+const CarouselWrapper = styled.div`
   display: flex;
   overflow: hidden;
   position: relative;
-  width: ${(props) => `${props.width}px`};
+  width: 100%;
 `;
 
 const CarouselContainer = styled.div`
@@ -25,11 +26,11 @@ const CarouselContainer = styled.div`
 `;
 
 const CarouselItem = styled.div<StyledProps>`
-  flex: 0 0 ${(props) => `${props.width}px`};
+  flex: 0 0 ${(props) => `${props.cardWidth}px`};
   display: flex;
   justify-content: center;
   align-items: center;
-  width: ${(props) => `${props.width}px`};
+  width: ${(props) => `${props.cardWidth}px`};
 `;
 
 const NavButton = styled.button`
@@ -52,9 +53,9 @@ const NextButton = styled(NavButton)`
   right: 10px;
 `;
 
-export const Carousel: React.FC<CarouselProps> = ({ children, isInfinite, width }) => {
+export const Carousel: React.FC<CarouselProps> = ({ children, isInfinite, visibleCards, cardWidth }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(visibleCards); // Start at the first visible item
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
@@ -62,23 +63,24 @@ export const Carousel: React.FC<CarouselProps> = ({ children, isInfinite, width 
 
   const childrenArray = React.Children.toArray(children);
   const totalItems = childrenArray.length;
+  const totalWidth = cardWidth * visibleCards;
 
   const nextSlide = useCallback(() => {
     setTransition(true);
     setCurrentIndex((prevIndex) => {
       if (isInfinite) {
-        return (prevIndex + 1) % totalItems;
+        return prevIndex + 1;
       } else {
-        return Math.min(prevIndex + 1, totalItems - 1);
+        return Math.min(prevIndex + 1, totalItems - visibleCards);
       }
     });
-  }, [isInfinite, totalItems]);
+  }, [isInfinite, totalItems, visibleCards]);
 
   const prevSlide = useCallback(() => {
     setTransition(true);
     setCurrentIndex((prevIndex) => {
       if (isInfinite) {
-        return (prevIndex - 1 + totalItems) % totalItems;
+        return prevIndex - 1;
       } else {
         return Math.max(prevIndex - 1, 0);
       }
@@ -101,7 +103,7 @@ export const Carousel: React.FC<CarouselProps> = ({ children, isInfinite, width 
   const handleDragEnd = () => {
     setIsDragging(false);
     setTransition(true);
-    if (Math.abs(dragOffset) > width / 2) {
+    if (Math.abs(dragOffset) > cardWidth / 2) {
       if (dragOffset > 0) {
         prevSlide();
       } else {
@@ -113,15 +115,17 @@ export const Carousel: React.FC<CarouselProps> = ({ children, isInfinite, width 
   };
 
   useEffect(() => {
-    if (isInfinite && currentIndex === totalItems) {
-      setTransition(false);
-      setCurrentIndex(0);
+    if (isInfinite) {
+      if (currentIndex >= totalItems + visibleCards) {
+        setTransition(false);
+        setCurrentIndex(visibleCards);
+      }
+      if (currentIndex <= 0) {
+        setTransition(false);
+        setCurrentIndex(totalItems);
+      }
     }
-    if (isInfinite && currentIndex === -1) {
-      setTransition(false);
-      setCurrentIndex(totalItems - 1);
-    }
-  }, [currentIndex, isInfinite, totalItems]);
+  }, [currentIndex, isInfinite, totalItems, visibleCards]);
 
   useEffect(() => {
     if (!isDragging) {
@@ -130,12 +134,13 @@ export const Carousel: React.FC<CarouselProps> = ({ children, isInfinite, width 
   }, [isDragging]);
 
   return (
-    <CarouselWrapper width={width}>
+    <CarouselWrapper>
       <CarouselContainer
         ref={containerRef}
         style={{
-          transform: `translateX(${(-currentIndex * width) + dragOffset}px)`,
+          transform: `translateX(${(-currentIndex * cardWidth) + dragOffset}px)`,
           transition: transition ? 'transform 0.3s ease-in-out' : 'none',
+          width: `${(totalItems + visibleCards * 2) * cardWidth}px`
         }}
         onMouseDown={handleDragStart}
         onMouseMove={handleDragMove}
@@ -145,23 +150,21 @@ export const Carousel: React.FC<CarouselProps> = ({ children, isInfinite, width 
         onTouchMove={handleDragMove}
         onTouchEnd={handleDragEnd}
       >
-        {isInfinite ? (
-          <>
-            <CarouselItem width={width}>{childrenArray[totalItems - 1]}</CarouselItem>
-            {childrenArray.map((child, index) => (
-              <CarouselItem key={index} width={width}>
-                {child}
-              </CarouselItem>
-            ))}
-            <CarouselItem width={width}>{childrenArray[0]}</CarouselItem>
-          </>
-        ) : (
-          childrenArray.map((child, index) => (
-            <CarouselItem key={index} width={width}>
-              {child}
-            </CarouselItem>
-          ))
-        )}
+        {isInfinite && childrenArray.slice(-visibleCards).map((child, index) => (
+          <CarouselItem key={`prepend-${index}`} cardWidth={cardWidth}>
+            {child}
+          </CarouselItem>
+        ))}
+        {childrenArray.map((child, index) => (
+          <CarouselItem key={index} cardWidth={cardWidth}>
+            {child}
+          </CarouselItem>
+        ))}
+        {isInfinite && childrenArray.slice(0, visibleCards).map((child, index) => (
+          <CarouselItem key={`append-${index}`} cardWidth={cardWidth}>
+            {child}
+          </CarouselItem>
+        ))}
       </CarouselContainer>
       <PrevButton onClick={prevSlide}>&lt;</PrevButton>
       <NextButton onClick={nextSlide}>&gt;</NextButton>
