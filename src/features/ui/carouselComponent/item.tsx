@@ -40,8 +40,8 @@ export const Item = ({
    * Updates the transform style of the item based on the given position and current state.
    * @param {number} position  The position to update the transform to.
    */
-  const updateTransform = (position: number) => {
-    const currentPosition = state.context.moveX;
+  const updateTransform = (position: number, currentPosition: number) => {
+    // const currentPosition = state.context.moveX;
     if (itemRef.current) {
       const newPosition = position + currentPosition;
       if ($isInfinite) {
@@ -125,7 +125,7 @@ export const Item = ({
    */
   useEffect(() => {
     if (drag && itemRef.current && between) {
-      updateTransform((between / $itemWidth) * 100);
+      updateTransform((between / $itemWidth) * 100, state.context.moveX);
     }
   }, [between]);
 
@@ -135,18 +135,24 @@ export const Item = ({
   useEffect(() => {
     if (!drag && itemRef.current) {
       send({ type: "SET_MOVEX", xmove: getInitialPosition() });
-      const velocityLimit = Math.floor(velocity) * 100;
-      let speed = velocity * 6;
-      const speedDecay = 0.98;
+      const velocityLimit = Math.floor(velocity * 0.5) * 100;
+      let speed = velocity * 0.7;
+      const speedDecay = 1;
       let distanceTraveled = 0;
 
       if ($isInfinite) {
         const distance = between > 0 ? 1 : -1;
         if (between > 0) {
           const timer = setInterval(() => {
+            let currentPosition;
+            if (distanceTraveled === 0) {
+              currentPosition = getInitialPosition();
+            } else {
+              currentPosition = state.context.moveX;
+            }
             distanceTraveled += speed * distance;
             speed *= speedDecay;
-            updateTransform(distanceTraveled);
+            updateTransform(distanceTraveled, currentPosition);
             if (Math.abs(distanceTraveled) > velocityLimit) {
               clearInterval(timer);
               const position = getInitialPosition();
@@ -156,12 +162,18 @@ export const Item = ({
                 setIndex(finalIndex);
               }
             }
-          }, 50);
+          }, 11);
         } else if (between < 0) {
           const timer = setInterval(() => {
+            let currentPosition;
+            if (distanceTraveled === 0) {
+              currentPosition = getInitialPosition();
+            } else {
+              currentPosition = state.context.moveX;
+            }
             distanceTraveled += speed * distance;
             speed *= speedDecay;
-            updateTransform(distanceTraveled);
+            updateTransform(distanceTraveled, currentPosition);
             if (Math.abs(distanceTraveled) > velocityLimit) {
               clearInterval(timer);
               const position = getInitialPosition();
@@ -171,15 +183,21 @@ export const Item = ({
                 setIndex(finalIndex);
               }
             }
-          }, 50);
+          }, 11);
         }
       } else {
         const init = getInitialPosition();
         if (between > 0 && init < 0) {
           const timer = setInterval(() => {
+            let currentPosition;
+            if (distanceTraveled === 0) {
+              currentPosition = getInitialPosition();
+            } else {
+              currentPosition = state.context.moveX;
+            }
             distanceTraveled += speed;
             speed *= speedDecay;
-            updateTransform(distanceTraveled);
+            updateTransform(distanceTraveled, currentPosition);
             if (
               distanceTraveled > velocityLimit ||
               init + distanceTraveled > 70
@@ -198,12 +216,18 @@ export const Item = ({
                 setIndex(index);
               }
             }
-          }, 50);
+          }, 11);
         } else if (between < 0 && init > -700) {
           const timer = setInterval(() => {
+            let currentPosition;
+            if (distanceTraveled === 0) {
+              currentPosition = getInitialPosition();
+            } else {
+              currentPosition = state.context.moveX;
+            }
             distanceTraveled -= speed;
             speed *= speedDecay;
-            updateTransform(distanceTraveled);
+            updateTransform(distanceTraveled, currentPosition);
             if (
               Math.abs(distanceTraveled) > velocityLimit ||
               init + distanceTraveled < -770
@@ -222,7 +246,7 @@ export const Item = ({
                 setIndex(index);
               }
             }
-          }, 50);
+          }, 11);
         }
       }
     }
